@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block title %}Register new user{% endblock title %}
+
+{% block content %}
+    <h2>Create an account</h2>
+    <p>Please use, following form to register.</p>
+    <form method='post'>
+        {% csrf_token %}
+        {{ user_form.as_p }}
+        <input type='submit' value='Create account'>
+    </form>
+{% endblock content %}
