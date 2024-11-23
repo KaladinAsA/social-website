@@ -5,14 +5,14 @@
 
 {% block content %}
     <h1>People</h1>
-    <div id='people-list'>
+    <div id='people-list' style="display: flex; flex-wrap: wrap; gap: 20px;">
         {% for user in users %}
-            <div class='user'>
+            <div class='user' style="width: 200px; text-align: center; overflow: hidden; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
                 <a href="{{ user.get_absolute_url }}">
-                    <img src="{% thumbnail user.profile.photo 180x180 %}">
+                    <img src="{% thumbnail user.profile.photo 150x150 %}" style="border-radius: 50%; width: 150px; height: 150px; object-fit: cover;">
                 </a>
-                <div class='info'>
-                    <a href='{{ user.get_absolute_url }}' class='title'>
+                <div class='info' style="margin-top: 10px;">
+                    <a href='{{ user.get_absolute_url }}' class='title' style="text-decoration: none; color: #333; font-weight: bold;">
                         {{ user.get_full_name }}
                     </a>
                 </div>

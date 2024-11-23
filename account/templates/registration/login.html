@@ -1,39 +1,46 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 
-{% block title %}Log-in{% endblock title %}
+{% block title %}Log In{% endblock title %}
 
 {% block content %}
-    <h2>Log-in</h2>
-    {% if form.errors %}
-    <p>
-        Your password or user name was wrong
-    </p>
-    {% else %}
-    <p>
-        Please, use the following form to log-in
-    </p>
-    <p>Don't have an account? <a href="{% url 'register' %}">register here.<a/></p>
-    <p>you can enter you username or email addres in "Username" section</p>
-    {% endif %}
-    <div class='login-form'>
-        <form action="{% url 'login' %}" method='post'>
-            {{ form.as_p }}
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card shadow-sm p-3" style="max-width: 400px;">
+        <h2 class="card-title text-center mb-3">Log In</h2>
+
+        {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+                Your username or password was incorrect. Please try again.
+            </div>
+        {% else %}
+            <p class="text-muted text-center mb-2">
+                Use the form below to log in. You can enter your username or email in the "Username" field.
+            </p>
+            <p class="text-center">
+                Don't have an account? <a href="{% url 'register' %}">Register here</a>.
+            </p>
+        {% endif %}
+
+        <form action="{% url 'login' %}" method="post" class="mt-3" id="login-form">
             {% csrf_token %}
+            {{ form|crispy }}
             <input type="hidden" name="next" value="{{ next }}" />
-            <p><input type='submit' value='Log-in'></p>
+
+            <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-primary btn-sm">Log In</button>
+            </div>
         </form>
-        <p><a href="{% url 'password_reset' %}">
-            Forgoten your password?
-            </a>
+
+        <p class="text-center mt-2">
+            <a href="{% url 'password_reset' %}" class="text-decoration-none">Forgot your password?</a>
         </p>
+
+        <div class="text-center mt-3">
+            <p class="text-muted mb-1">Or sign in with:</p>
+            <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-google"></i> Google
+            </a>
+        </div>
     </div>
-    <div class='social'>
-        <ul>
-            <li class='google'>
-                <a href="{% url "social:begin" "google-oauth2" %}">
-                    Sign in with Google
-                </a>
-            </li>
-        </ul>
-    </div>
+</div>
 {% endblock content %}

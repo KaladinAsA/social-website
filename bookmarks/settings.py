@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'social_django',
     'django_extensions',
     'debug_toolbar',
+    "crispy_forms",
+    "crispy_bootstrap5",
     # Local apps
     'images.apps.ImagesConfig',
     'easy_thumbnails',
@@ -133,6 +135,9 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Crispy Form
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5" # new
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # Login & Logout
 
@@ -190,3 +195,4 @@ INTERNAL_IPS = [
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 REDIS_DB = 0
+

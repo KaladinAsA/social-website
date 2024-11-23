@@ -3,84 +3,95 @@
 {% block title %}{{ image.title }}{% endblock %}
 
 {% block content %}
-  <h1>{{ image.title }}</h1>
-  {% load thumbnail %}
-  <a href="{{ image.image.url }}">
-    <img src="{% thumbnail image.image 300x0 %}" class="image-detail">
-  </a>
-  {% with total_likes=image.users_like.count users_like=image.users_like.all %}
-    <div class="image-info">
-      <div>
-        <span class="count">
-          <span class="total">{{ total_likes }}</span>
-          like{{ total_likes|pluralize }}
-        </span>
-        <span class="count">
-          {{ total_views }} view{{ total_views|pluralize }}
-        </span>
-        <a href="#" data-id="{{ image.id }}" data-action="{% if request.user in users_like %}un{% endif %}like"
-    class="like button">
-          {% if request.user not in users_like %}
-            Like
-          {% else %}
-            Unlike
-          {% endif %}
-        </a>
-      </div>
-      {{ image.description|linebreaks }}
-    </div>
-    <div class="image-likes">
-      {% for user in users_like %}
-        <div>
-          {% if user.profile.photo %}
-            <img src="{{ user.profile.photo.url }}">
-          {% endif %}
-          <p>{{ user.first_name }}</p>
+<div class="container mt-4">
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+            <h1 class="card-title">{{ image.title }}</h1>
+            {% load thumbnail %}
+            <a href="{{ image.image.url }}">
+                <img src="{% thumbnail image.image 300x0 %}" class="img-fluid rounded mb-3" alt="{{ image.title }}">
+            </a>
+            <div class="d-flex justify-content-between align-items-center">
+                {% with total_likes=image.users_like.count users_like=image.users_like.all %}
+                <div class="d-flex align-items-center">
+                    <span class="me-3">
+                        <strong>{{ total_likes }}</strong> like{{ total_likes|pluralize }}
+                    </span>
+                    <span class="me-3">
+                        <strong>{{ total_views }}</strong> view{{ total_views|pluralize }}
+                    </span>
+                    <a href="#" data-id="{{ image.id }}" data-action="{% if request.user in users_like %}un{% endif %}like"
+                        class="btn btn-sm btn-outline-primary like-button">
+                        {% if request.user not in users_like %}
+                            Like
+                        {% else %}
+                            Unlike
+                        {% endif %}
+                    </a>
+                </div>
+                {% endwith %}
+            </div>
+            <p class="card-text mt-3">{{ image.description|linebreaks }}</p>
         </div>
-      {% empty %}
-        Nobody likes this image yet.
-      {% endfor %}
     </div>
-  {% endwith %}
+
+    <div class="card">
+        <div class="card-header">People who like this image</div>
+        <div class="card-body">
+            <div class="d-flex flex-wrap">
+                {% for user in users_like %}
+                    <div class="me-3 text-center">
+                        {% if user.profile.photo %}
+                            <img src="{{ user.profile.photo.url }}" class="rounded-circle" width="50" height="50" alt="{{ user.first_name }}">
+                        {% else %}
+                            <img src="https://via.placeholder.com/50" class="rounded-circle" alt="Placeholder">
+                        {% endif %}
+                        <p class="small mt-2">{{ user.first_name }}</p>
+                    </div>
+                {% empty %}
+                    <p class="text-muted">Nobody likes this image yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block domready %}
+<script>
   const url = '{% url "images:like" %}';
+  const csrfToken = '{{ csrf_token }}';
   var options = {
     method: 'POST',
-    headers: {'X-CSRFToken': csrftoken},
+    headers: {'X-CSRFToken': csrfToken},
     mode: 'same-origin'
   }
 
-  document.querySelector('a.like')
-          .addEventListener('click', function(e){
+  document.querySelector('a.like-button').addEventListener('click', function(e) {
     e.preventDefault();
     var likeButton = this;
 
-    // add request body
     var formData = new FormData();
     formData.append('id', likeButton.dataset.id);
     formData.append('action', likeButton.dataset.action);
     options['body'] = formData;
 
-    // send HTTP request
     fetch(url, options)
     .then(response => response.json())
     .then(data => {
-      if (data['status'] === 'ok')
-      {
+      if (data['status'] === 'ok') {
         var previousAction = likeButton.dataset.action;
 
-        // toggle button text and data-action
         var action = previousAction === 'like' ? 'unlike' : 'like';
         likeButton.dataset.action = action;
-        likeButton.innerHTML = action;
+        likeButton.innerHTML = action.charAt(0).toUpperCase() + action.slice(1);
 
-        // update like count
-        var likeCount = document.querySelector('span.count .total');
+        var likeCount = document.querySelector('span.total');
         var totalLikes = parseInt(likeCount.innerHTML);
         likeCount.innerHTML = previousAction === 'like' ? totalLikes + 1 : totalLikes - 1;
       }
-    })
+    });
   });
+</script>
 {% endblock %}
+

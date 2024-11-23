@@ -3,10 +3,11 @@
 {% block title %}Login{% endblock title %}
 
 {% block content %}
-  <h2>Please, use the following from to login.</h2>
-  <form method='post'>
-    {{ form.as_p }}
+  <h2>Please, use the following form to log in.</h2>
+  
+  <form method="post">
     {% csrf_token %}
-    <p><input type='submit' value='Log-in'></p>
+    {{ form|crispy }}
+    <p><input type="submit" value="Log in" class="btn btn-primary"></p>
   </form>
 {% endblock content %}

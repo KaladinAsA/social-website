@@ -3,22 +3,43 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-    <h1>Dashboard</h1>
-    {% with total_images_created=request.user.images_created.count %}
-    <p>Welcome to your dashboard. You have bookmarked {{ total_images_created }} 
-        image {{ total_images_created|pluralize }}
-    </p>
-    {% endwith %}
-    <p>Drag the following button to your bookmarks toolbar to bookmark images 
-        from othe website → <a href="javascript:{% include 'bookmarklet_launcher.js' %}"
-        class='button'>Bookmark it</a></p>
-    <p>you can also <a href="{% url 'password_change' %}">change your password</a>
-         or <a href="{% url 'edit' %}">edit your account</a>.
-    </p>
-    <h2>What's happening</h2>
-    <div id='action-list'>
-        {% for action in actions %}
-            {% include 'actions/action/detail.html' %}
-        {% endfor %}
+    <div class="container mt-5">
+        <h1 class="display-4 mb-4">Dashboard</h1>
+        
+        {% with total_images_created=request.user.images_created.count %}
+        <div class="alert alert-info">
+            <p class="lead mb-0">
+                Welcome to your dashboard. You have bookmarked 
+                <span class="fw-bold">{{ total_images_created }}</span> 
+                image{{ total_images_created|pluralize }}.
+            </p>
+        </div>
+        {% endwith %}
+        
+        <p class="mb-4">
+            Drag the following button to your bookmarks toolbar to bookmark images from other websites → 
+            <a href="javascript:{% include 'bookmarklet_launcher.js' %}" class="btn btn-outline-primary ms-2">
+                Bookmark it
+            </a>
+        </p>
+        
+        <p>
+            You can also 
+            <a href="{% url 'password_change' %}" class="text-decoration-none me-2">change your password</a> 
+            or 
+            <a href="{% url 'edit' %}" class="text-decoration-none">edit your account</a>.
+        </p>
+        
+        <h2 class="mt-5">What's happening</h2>
+        
+        <div id="action-list" class="list-group mt-3">
+            {% for action in actions %}
+                <div class="list-group-item">
+                    {% include 'actions/action/detail.html' %}
+                </div>
+            {% empty %}
+                <p class="text-muted text-center py-3">No recent activities.</p>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}
